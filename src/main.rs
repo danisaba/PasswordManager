@@ -53,5 +53,6 @@ fn print_saved_passwords(){
 fn main() {
     println!("Welcome to Password Box! Soon to have usernames and passwords! Please enter one of the following options!");
     text_options();
-    
 }
+
+//test test test this is to see if committing works :-)
