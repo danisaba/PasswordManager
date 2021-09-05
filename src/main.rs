@@ -1,5 +1,17 @@
 use std::io;
 use std::process;
+#[macro_use(lazy_static)]
+extern crate lazy_static;
+
+use std::collections::HashMap;
+use std::sync::Mutex;
+
+lazy_static! {
+    static ref HASHMAP: HashMap<&'static str, &'static str> = {
+        let mut passwords_saved = HashMap::new();
+        passwords_saved
+    };
+}
 
 //This function sets up the box. It gives you your options and takes you to the functions which will do the options for you.
 fn text_options(){
@@ -69,9 +81,16 @@ fn make_new_password(){
 
 //If a user has an already thought-up password to save, they can save it with this function
 fn save_password(){
-    println!("We saving a password bois")
+    println!("we savin");
 /*
     println!("What is the application you are saving the password for?");
+    let mut input = String::new();
+    match io::stdin().read_line(&mut input) {
+        Ok(_) => {
+
+        },
+        Err(e) => println!("Hm. Looks like that might be incorrect: {}", e)
+    }
     //make this the key
     println!("What is the password you are saving?");
     //make this the value
@@ -90,13 +109,16 @@ fn modify_existing_password(){
 }
 
 // This will print all of the currently saved passwords from the dictionary in "application: password" format
-fn print_saved_passwords(){
+fn print_saved_passwords(hash: &mut HashMap<&str, &str>){
     println!("Here are your current saved passwords: ");
-    //printing current hashmap cannot be done until I have implemented the hashmap
+    for (app, pass) in hash {
+        println!("{}: \"{}\"", app, pass);
+    }
 }
 
 //This is the main function. It will put everything together
 fn main() {
+    let mut passwords_saved: HashMap<&str, &str> = HashMap::new();
     println!("Welcome to Password Box! Soon to have usernames and passwords! Please enter one of the following options!");
     text_options();
 }
