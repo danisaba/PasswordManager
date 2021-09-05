@@ -34,28 +34,36 @@ and then it will ask if you want to save it or if you want to generate a new one
 ask what app this pass is for and then add it to the Hashmap of app/pass.
 */
 fn make_new_password(){
-    println!("we makin a rando password bois");
-/*
-    println!("Would you like a 16 or 32 character password?");
+    println!("Would you like a 16 or 32 character password? (16/32)");
     let mut input = String::new();
     match io::stdin().read_line(&mut input) {
         Ok(_) => {
-                println!("Great! Would you like special characters(/,!,@, etc) in the password?");
-                let mut input2 = String::new();
-                match io::stdin().read_line(&mut input) {
-                    Ok(_) => {
-                        println!("Let's generate a password!");
-                    },
-                    Err(e) => println!("That doesn't seem to be an option!: {}", e)
-                }
+            println!("Next, would you like special characters(/,!,@, etc) in this password? (y/n)");
+            match io::stdin().read_line(&mut input) {
+                Ok(_) => {
+                    println!("{}", input);
+                    if input.eq("16\ny\n"){
+                        println!("Sweet! Let's make a 16 char password with special characters!");
+                    }else if input.eq("16\nn\n"){
+                        println!("Okay! Let's make a 16 char password without special characters!");
+                    }else if input.eq("32\ny\n"){
+                        println!("Alright. Let's make a 32 char password with special characters!");
+                    }else if input.eq("32\nn\n"){
+                        println!("Okay! Let's make a 32 char passord without special characters.");
+                    }else{
+                        println!("That is not an option!");
+                        std::process::exit(0);
+                    }
+                    println!("Here is your generated password: ");
+                    //add password print
+                    println!("Would you like to save this password or generate a new one? Enter 'save' to save, and nothing to generate another!")
+                    //if else
+                },
+                Err(e) => println!("That doesn't seem to be an option!: {}", e)
+            }
         },
-        Err(e) => println!("Hm, that doesn't seem to be an option we have!: {}", e)
+    Err(e) => println!("Hm, that doesn't seem to be an option we have!: {}", e)
     }
-    println!("Here is your generated password: ");
-    //add password print
-    println!("Would you like to save this password or generate a new one? Enter 'save' to save, and nothing to generate another!")
-    //if else
-*/
 }
 
 
