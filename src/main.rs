@@ -1,20 +1,8 @@
 use std::io;
-use std::process;
-#[macro_use(lazy_static)]
-extern crate lazy_static;
-
 use std::collections::HashMap;
-use std::sync::Mutex;
-
-lazy_static! {
-    static ref HASHMAP: HashMap<&'static str, &'static str> = {
-        let mut passwords_saved = HashMap::new();
-        passwords_saved
-    };
-}
 
 //This function sets up the box. It gives you your options and takes you to the functions which will do the options for you.
-fn text_options(){
+fn text_options(hash: &mut HashMap<&str, &str>){
     println!("Enter 'see passwords' if you would like your current saved passwords listed!");
     println!("Enter 'save a password' if you would like to save a new password to your vault!");
     println!("Enter 'make a random password' if you would like a generated password!");
@@ -23,7 +11,7 @@ fn text_options(){
     match io::stdin().read_line(&mut input) {
         Ok(_) => {
             if input.eq("see passwords\n") {
-                print_saved_passwords()
+                print_saved_passwords(hash)
             }else if input.eq("save a password\n"){
                  save_password()
             }else if input.eq("make a random password\n") {
@@ -120,5 +108,5 @@ fn print_saved_passwords(hash: &mut HashMap<&str, &str>){
 fn main() {
     let mut passwords_saved: HashMap<&str, &str> = HashMap::new();
     println!("Welcome to Password Box! Soon to have usernames and passwords! Please enter one of the following options!");
-    text_options();
+    text_options(&mut passwords_saved);
 }
