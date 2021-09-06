@@ -15,7 +15,7 @@ fn text_options(hash: &mut HashMap<String, String>){
             }else if input.eq("save a password\n"){
                 save_password(hash);
             }else if input.eq("make a random password\n") {
-                make_new_password()
+                make_random_password()
             }else if input.eq("modify a password\n") {
                 modify_existing_password(hash)
             }else if input.eq("quit\n"){
@@ -35,7 +35,7 @@ and then it will ask if you want special characters. Once all your options are s
 and then it will ask if you want to save it or if you want to generate a new one. if you want to save it it will
 ask what app this pass is for and then add it to the Hashmap of app/pass.
 */
-fn make_new_password(){
+fn make_random_password(){
     println!("Would you like a 16 or 32 character password? (16/32)");
     let mut input = String::new();
     match io::stdin().read_line(&mut input) {
@@ -142,8 +142,6 @@ fn modify_existing_password(hash: &mut HashMap<String, String>){
         },
         Err(e) => println!("Hm. Looks like that might be incorrect: {}", e)
     }
-    //if else. If they enter something applicable, move forward, if not, print that it is not a current hash key
-    //cannot implement until the hashmap is done.
 }
 
 // This will print all of the currently saved passwords from the dictionary in "application: password" format
