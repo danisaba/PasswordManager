@@ -2,7 +2,7 @@ use std::io;
 use std::collections::HashMap;
 
 //This function sets up the box. It gives you your options and takes you to the functions which will do the options for you.
-fn text_options(hash: &mut HashMap<&str, &str>){
+fn text_options(hash: &mut HashMap<String, String>){
     println!("Enter 'see passwords' if you would like your current saved passwords listed!");
     println!("Enter 'save a password' if you would like to save a new password to your vault!");
     println!("Enter 'make a random password' if you would like a generated password!");
@@ -13,7 +13,7 @@ fn text_options(hash: &mut HashMap<&str, &str>){
             if input.eq("see passwords\n") {
                 print_saved_passwords(hash)
             }else if input.eq("save a password\n"){
-                 save_password()
+                save_password(hash);
             }else if input.eq("make a random password\n") {
                 make_new_password()
             }else if input.eq("modify a password\n") {
@@ -68,22 +68,25 @@ fn make_new_password(){
 
 
 //If a user has an already thought-up password to save, they can save it with this function
-fn save_password(){
-    println!("we savin");
-/*
-    println!("What is the application you are saving the password for?");
+fn save_password(hash: &mut HashMap<String, String>) {
+    println!("What is the application/website/etc you are saving the password for?");
     let mut input = String::new();
     match io::stdin().read_line(&mut input) {
         Ok(_) => {
-
+            let input_text = input.trim();
+            println!("Perfect! What do you want the password for {} to be", input_text);
+            match io::stdin().read_line(&mut input) {
+                Ok(_) => {
+                    let input_list: Vec<&str>;
+                    input_list = input.split("\n").collect();
+                    println!("Okay, so {}'s password is {}. Saved!", input_list[0], input_list[1]);
+                    hash.insert(input_list[0].to_string(), input_list[1].to_string());
+                },  
+                Err(e) => println!("Hm. Looks like that might be incorrect: {}", e)
+            }
         },
         Err(e) => println!("Hm. Looks like that might be incorrect: {}", e)
     }
-    //make this the key
-    println!("What is the password you are saving?");
-    //make this the value
-    println!("Password saved!");
-*/
 }
 
 /*
@@ -97,7 +100,7 @@ fn modify_existing_password(){
 }
 
 // This will print all of the currently saved passwords from the dictionary in "application: password" format
-fn print_saved_passwords(hash: &mut HashMap<&str, &str>){
+fn print_saved_passwords(hash: &mut HashMap<String, String>){
     println!("Here are your current saved passwords: ");
     for (app, pass) in hash {
         println!("{}: \"{}\"", app, pass);
@@ -106,7 +109,7 @@ fn print_saved_passwords(hash: &mut HashMap<&str, &str>){
 
 //This is the main function. It will put everything together
 fn main() {
-    let mut passwords_saved: HashMap<&str, &str> = HashMap::new();
+    let mut passwords_saved: HashMap<String, String> = HashMap::new();
     println!("Welcome to Password Box! Soon to have usernames and passwords! Please enter one of the following options!");
     text_options(&mut passwords_saved);
 }
