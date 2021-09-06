@@ -1,5 +1,8 @@
 use std::io;
 use std::collections::HashMap;
+use rand::{thread_rng, Rng};
+use rand::distributions::Alphanumeric;
+use nanoid::nanoid;
 
 //This function sets up the box. It gives you your options and takes you to the functions which will do the options for you.
 fn text_options(hash: &mut HashMap<String, String>){
@@ -15,7 +18,7 @@ fn text_options(hash: &mut HashMap<String, String>){
             }else if input.eq("save a password\n"){
                 save_password(hash);
             }else if input.eq("make a random password\n") {
-                make_random_password()
+                make_random_password(hash)
             }else if input.eq("modify a password\n") {
                 modify_existing_password(hash)
             }else if input.eq("quit\n"){
@@ -29,13 +32,41 @@ fn text_options(hash: &mut HashMap<String, String>){
     }
 }
 
+//this function generates a 16 character password
+fn make_16_char_pass(special_chars: bool) -> String {
+    let alphabet: [char; 82] = [
+        '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'a', 'b', 'c', 'd', 'e', 'f', 'g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','!','@','#','$','%','^','&','*','(',')','_','-','+','=',';',':','/','?','<','>'
+    ];
+    if special_chars {
+        let pass = nanoid!(16, &alphabet);
+        return pass
+    }else{
+        let pass: String = thread_rng().sample_iter(&Alphanumeric).take(16).map(char::from).collect();
+        return pass
+    }
+}
+
+//this function generates a 32 character password
+fn make_32_char_pass(special_chars: bool) -> String{
+    let alphabet: [char; 82] = [
+        '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'a', 'b', 'c', 'd', 'e', 'f', 'g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','!','@','#','$','%','^','&','*','(',')','_','-','+','=',';',':','/','?','<','>'
+    ];
+    if special_chars {
+        let pass = nanoid!(32, &alphabet);
+        return pass
+    }else{
+        let pass: String = thread_rng().sample_iter(&Alphanumeric).take(32).map(char::from).collect();
+        return pass
+    }
+}
+
 /*
 this function is going to make new passwords. It will ask if you want a random 32 or 16 character pass
 and then it will ask if you want special characters. Once all your options are set it will give you a random pass
 and then it will ask if you want to save it or if you want to generate a new one. if you want to save it it will
 ask what app this pass is for and then add it to the Hashmap of app/pass.
 */
-fn make_random_password(){
+fn make_random_password(hash: &mut HashMap<String, String>){
     println!("Would you like a 16 or 32 character password? (16/32)");
     let mut input = String::new();
     match io::stdin().read_line(&mut input) {
@@ -50,27 +81,59 @@ fn make_random_password(){
                     println!("{}", input);
                     if input.eq("16\ny\n"){
                         println!("Sweet! Let's make a 16 char password with special characters!");
+                        let password = make_16_char_pass(true);
+                        println!("Here is your generated password: {}", password);
+                        generate_cont(hash, password);
                     }else if input.eq("16\nn\n"){
                         println!("Okay! Let's make a 16 char password without special characters!");
+                        let password = make_16_char_pass(false);
+                        println!("Here is your generated password: {}", password);
+                        generate_cont(hash, password);
                     }else if input.eq("32\ny\n"){
                         println!("Alright. Let's make a 32 char password with special characters!");
+                        let password = make_32_char_pass(true);
+                        println!("Here is your generated password: {}", password);
+                        generate_cont(hash, password);
                     }else if input.eq("32\nn\n"){
                         println!("Okay! Let's make a 32 char passord without special characters.");
+                        let password = make_32_char_pass(false);
+                        println!("Here is your generated password: {}", password);
+                        generate_cont(hash, password);
                     }else if input.eq("16\nquit\n") || input.eq("32\nquit\n"){
                         println!("Aw man! You were in the middle of generating. Bye!");
                         std::process::exit(0);
                     }else {
                         println!("That is not an option!");
                     }
-                    println!("Here is your generated password: ");
-                    //add password print
-                    println!("Would you like to save this password or generate a new one? Enter 'save' to save, and nothing to generate another!")
-                    //if else
                 },
                 Err(e) => println!("That doesn't seem to be an option!: {}", e)
             }
         },
     Err(e) => println!("Hm, that doesn't seem to be an option we have!: {}", e)
+    }
+}
+
+//this function serves to make generating less long since its a big one.
+fn generate_cont(hash: &mut HashMap<String, String>, password: String) {
+    println!("Would you like to save this password or generate a new one? Enter 'save' to save, and 'exit' to leave the generator!");
+    let mut input2 = String::new();
+    match io::stdin().read_line(&mut input2) {
+        Ok(_) => {
+            if input2.trim().eq("save"){
+                println!("Okay, let's save this password :-). What application/website are you saving this password for?");
+                let mut input3 = String::new();
+                match io::stdin().read_line(&mut input3) {
+                    Ok(_) => {
+                        hash.insert(input3.trim().to_string(), password);
+                        println!("Okie dokie! Your new password has been stored :-)");
+                    },
+                    Err(e) => println!("That doesn't seem to be an option!: {}", e)
+                }
+            }else if input2.trim().eq("exit") {
+                return
+            }
+        },
+        Err(e) => println!("That doesn't seem to be an option!: {}", e)
     }
 }
 
