@@ -17,7 +17,7 @@ fn text_options(hash: &mut HashMap<String, String>){
             }else if input.eq("make a random password\n") {
                 make_new_password()
             }else if input.eq("modify a password\n") {
-                modify_existing_password()
+                modify_existing_password(hash)
             }else{
                 println!("That is not an option!");
                 std::process::exit(0);
@@ -93,8 +93,31 @@ fn save_password(hash: &mut HashMap<String, String>) {
 This function will go through the hashmap and be able to modify a value inside of it, so that the modified
 password can be saved instead of making a new key for it.
 */
-fn modify_existing_password(){
-    println!("Which password would you like to modify?");
+fn modify_existing_password(hash: &mut HashMap<String, String>){
+    println!("What is the name of the application/website that you are trying to modify the saved password for?");
+    let mut input = String::new();
+    match io::stdin().read_line(&mut input) {
+        Ok(_) => {
+            match hash.get(input.trim()) {
+                Some(password) => println!("Your current saved password is {}.", password),
+                _ => {
+                    println!("Hm. Looks like that isn't a current entry!");
+                    std::process::exit(0);
+                }
+            }
+            println!("What would you like to change the password to?");
+            let mut input2 = String::new();
+            match io::stdin().read_line(&mut input2) {
+                Ok(_) => {
+                    println!("Perfect! We will change the password to {}", input2.trim());
+                    hash.remove(input.trim());
+                    hash.insert(input.trim().to_string(), input2.trim().to_string());
+                },
+                Err(e) => println!("Hm. Looks like that might be incorrect: {}", e)
+            }
+        },
+        Err(e) => println!("Hm. Looks like that might be incorrect: {}", e)
+    }
     //if else. If they enter something applicable, move forward, if not, print that it is not a current hash key
     //cannot implement until the hashmap is done.
 }
