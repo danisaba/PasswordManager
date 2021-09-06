@@ -18,9 +18,11 @@ fn text_options(hash: &mut HashMap<String, String>){
                 make_new_password()
             }else if input.eq("modify a password\n") {
                 modify_existing_password(hash)
+            }else if input.eq("quit\n"){
+                println!("Cya later!");
+                std::process::exit(0);
             }else{
                 println!("That is not an option!");
-                std::process::exit(0);
             }
         },
         Err(e) => println!("Hm, we have an error: {}", e)
@@ -38,6 +40,10 @@ fn make_new_password(){
     let mut input = String::new();
     match io::stdin().read_line(&mut input) {
         Ok(_) => {
+            if input.eq("quit\n") {
+                println!("Ok. Bye bye :-)");
+                std::process::exit(0);
+            }
             println!("Next, would you like special characters(/,!,@, etc) in this password? (y/n)");
             match io::stdin().read_line(&mut input) {
                 Ok(_) => {
@@ -50,9 +56,11 @@ fn make_new_password(){
                         println!("Alright. Let's make a 32 char password with special characters!");
                     }else if input.eq("32\nn\n"){
                         println!("Okay! Let's make a 32 char passord without special characters.");
-                    }else{
-                        println!("That is not an option!");
+                    }else if input.eq("16\nquit\n") || input.eq("32\nquit\n"){
+                        println!("Aw man! You were in the middle of generating. Bye!");
                         std::process::exit(0);
+                    }else {
+                        println!("That is not an option!");
                     }
                     println!("Here is your generated password: ");
                     //add password print
@@ -74,11 +82,19 @@ fn save_password(hash: &mut HashMap<String, String>) {
     match io::stdin().read_line(&mut input) {
         Ok(_) => {
             let input_text = input.trim();
+            if input_text.eq("quit"){
+                println!("Oh. Bye!");
+                std::process::exit(0);
+            }
             println!("Perfect! What do you want the password for {} to be", input_text);
             match io::stdin().read_line(&mut input) {
                 Ok(_) => {
                     let input_list: Vec<&str>;
                     input_list = input.split("\n").collect();
+                    if input_list[1].eq("quit"){
+                        println!("Dang. Right in the middle of something!");
+                        std::process::exit(0);
+                    }
                     println!("Okay, so {}'s password is {}. Saved!", input_list[0], input_list[1]);
                     hash.insert(input_list[0].to_string(), input_list[1].to_string());
                 },  
@@ -98,6 +114,10 @@ fn modify_existing_password(hash: &mut HashMap<String, String>){
     let mut input = String::new();
     match io::stdin().read_line(&mut input) {
         Ok(_) => {
+            if input.trim().eq("quit") {
+                println!("Okay! Bye bye :-)");
+                std::process::exit(0);
+            }
             match hash.get(input.trim()) {
                 Some(password) => println!("Your current saved password is {}.", password),
                 _ => {
@@ -109,6 +129,10 @@ fn modify_existing_password(hash: &mut HashMap<String, String>){
             let mut input2 = String::new();
             match io::stdin().read_line(&mut input2) {
                 Ok(_) => {
+                    if input2.trim().eq("quit"){
+                        println!("Right in the middle of something...");
+                        std::process::exit(0);
+                    }
                     println!("Perfect! We will change the password to {}", input2.trim());
                     hash.remove(input.trim());
                     hash.insert(input.trim().to_string(), input2.trim().to_string());
@@ -133,6 +157,14 @@ fn print_saved_passwords(hash: &mut HashMap<String, String>){
 //This is the main function. It will put everything together
 fn main() {
     let mut passwords_saved: HashMap<String, String> = HashMap::new();
-    println!("Welcome to Password Box! Soon to have usernames and passwords! Please enter one of the following options!");
-    text_options(&mut passwords_saved);
+    println!("Welcome to Password Box! Soon to have usernames and passwords! Enter quit at any time to leave our box. Enter anything to continue!");
+    let mut input = String::new();
+    match io::stdin().read_line(&mut input) {
+        Ok(_) => {
+            while !input.trim().eq("quit") {
+            text_options(&mut passwords_saved);
+            }
+        },
+        Err(e) => println!("Hm. Looks like that might be incorrect: {}", e)
+    }
 }
