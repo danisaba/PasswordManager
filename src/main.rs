@@ -78,7 +78,6 @@ fn make_random_password(hash: &mut HashMap<String, String>){
             println!("Next, would you like special characters(/,!,@, etc) in this password? (y/n)");
             match io::stdin().read_line(&mut input) {
                 Ok(_) => {
-                    println!("{}", input);
                     if input.eq("16\ny\n"){
                         println!("Sweet! Let's make a 16 char password with special characters!");
                         let password = make_16_char_pass(true);
